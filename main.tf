@@ -14,6 +14,7 @@ resource "aws_instance" "ec2-vm" {
   associate_public_ip_address = true
   vpc_security_group_ids      = [aws_security_group.sg.id]
   subnet_id                   = aws_subnet.subnet.id
+  user_data                   = file("script.sh")
   tags = {
     Name = "${terraform.workspace}-ec2"
   }
