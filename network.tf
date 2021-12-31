@@ -12,7 +12,7 @@ data "aws_availability_zones" "azs" {
 }
 
 #Create subnet in us-east-1
-resource "aws_subnet" "subnet" {
+/*resource "aws_subnet" "subnet" {
     aws_availability_zone = element(data.aws_availability_zones.azs.names,0)
     vpc_id = aws_vpc.vpc_master.id
     cidr_block = "10.0.1.0/24"
@@ -21,7 +21,7 @@ resource "aws_subnet" "subnet" {
       Name = "${terraform.workspace}-subnet"  
     }
     
-}
+}*/
 
 #Create SG for TCP/22 ssh from anywhere
 resource "aws_security_group" "sg" {
@@ -36,11 +36,11 @@ resource "aws_security_group" "sg" {
       protocol    = ingress.value["proto"]
       cidr_blocks = ingress.value["cidr_blocks"]
     }
+    }
     egress {
       rom_port   = 0
       to_port     = 0
       protocol    = "-1"
       cidr_blocks = ["0.0.0.0/0"]
-    }
   }
 }
