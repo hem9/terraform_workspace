@@ -20,3 +20,6 @@ resource "aws_instance" "ec2-vm" {
     Name = "${terraform.workspace}-ec2"
   }
 }
+output "instace_ip" {
+  value = aws_instance.ec2-vm.*.public_ip
+}
