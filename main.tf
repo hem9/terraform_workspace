@@ -11,7 +11,7 @@ data "aws_ssm_parameter" "linuxAmi" {
 resource "aws_instance" "ec2-vm" {
   ami                         = data.aws_ssm_parameter.linuxAmi.value
   instance_type               = "t3.micro"
-  key_name                    = "GeneralKey"
+  key_name                    = "PrivateKey"
   associate_public_ip_address = true
   vpc_security_group_ids      = [aws_security_group.sg.id]
   subnet_id                   = aws_subnet.subnet.id
