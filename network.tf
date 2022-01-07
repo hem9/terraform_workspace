@@ -1,26 +1,24 @@
-#Create VPC in us-east-1
-resource "aws_vpc" "vpc_master" {
-  cidr_block = "10.0.0.0/16"
-  tags = {
-    Name = "${terraform.workspace}-vpc"
+resource "aws_internet_gateway" "prod-igw" {
+  vpc_id = aws_vpc.vpc_master.id
+  
+}
+
+resource "aws_route_table" "prod-public-crt" {
+  vpc_id = aws_vpc.vpc_master.id
+
+  route {
+    //associated subnet can reach everywhere
+    cidr_block = "0.0.0.0/0"
+    //CRT uses this IGW to reach internet
+    gateway_id = aws_internet_gateway.prod-igw.id
   }
+
 
 }
 
-#Get all available AZ's in VPC for master region
-data "aws_availability_zones" "azs" {
-  state = "available"
-}
-
-#Create subnet # 1 in us-east-1
-resource "aws_subnet" "subnet" {
-  availability_zone = element(data.aws_availability_zones.azs.names, 0)
-  vpc_id            = aws_vpc.vpc_master.id
-  cidr_block        = "10.0.1.0/24"
-
-  tags = {
-    Name = "${terraform.workspace}-subnet"
-  }
+resource "aws_route_table_association" "prod-crta-public-subnet-1" {
+  subnet_id      = aws_subnet.subnet.id
+  route_table_id = aws_route_table.prod-public-crt.id
 }
 
 
@@ -29,7 +27,7 @@ resource "aws_security_group" "sg" {
   name        = "${terraform.workspace}-sg"
   description = "Allow TCP/22"
   vpc_id      = aws_vpc.vpc_master.id
-dynamic "ingress" {
+  dynamic "ingress" {
     for_each = var.rules
     content {
       from_port   = ingress.value["port"]
@@ -39,12 +37,12 @@ dynamic "ingress" {
     }
   }
   egress {
-    from_port    = 0
+    from_port   = 0
     to_port     = 0
     protocol    = "-1"
     cidr_blocks = ["0.0.0.0/0"]
   }
   tags = {
-    Name = "${terraform.workspace}-securitygroup"
+    Name = "SSH-HTTP-securitygroup"
   }
 }

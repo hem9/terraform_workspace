@@ -16,8 +16,12 @@ resource "aws_instance" "ec2-vm" {
   vpc_security_group_ids      = [aws_security_group.sg.id]
   subnet_id                   = aws_subnet.subnet.id
   user_data                   = fileexists("script.sh") ? file("script.sh") : null
+  connection {
+    user        = var.EC2_USER
+    private_key = file("${var.PRIVATE_KEY_PATH}")
+  }
   tags = {
-    Name = "${terraform.workspace}-ec2"
+    Name = "main-ec2"
   }
 }
 output "instace_ip" {
