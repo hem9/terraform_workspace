@@ -19,12 +19,12 @@ data "aws_ssm_parameter" "linuxAmi" {
 # Define the ec2 instance resource
 # user_data points to the boostrap script used to deploy the instnace
 resource "aws_instance" "ec2_server" {
-  count                  = 1
-  ami                    = data.aws_ssm_parameter.linuxAmi.value
+  count                  = 2
+  ami                    = "ami-04505e74c0741db8d"
   instance_type          = "t2.micro"
   key_name               = "PrivateKey"
-  vpc_security_group_ids      = ["sg-0c8daf08b2d331bb1"]
-  subnet_id                   = "subnet-03a71fd3b4516ce6f"
+  vpc_security_group_ids      = ["sg-0fe5e83bec8403da5"]
+  subnet_id                   = "subnet-016797eb5e4da658c"
   user_data                   = fileexists("script.sh") ? file("script.sh") : null
   # Set the correct instance name in AWS
   tags = {
